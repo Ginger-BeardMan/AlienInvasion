@@ -3,6 +3,7 @@ import sys
 import pygame
 
 from settings import Settings
+from ship import Ship
 
 class AlienInvasion:
 	'''overall class to manage game assets and behavior'''
@@ -20,21 +21,31 @@ class AlienInvasion:
 		'''set background color'''
 		self.bg_color = (230, 230, 230)
 
+		self.ship = Ship(self)
+
 	def run_game(self):
 		'''start the main loop for the game'''
 		while True:
-			#watch for keyboard and mouse events
-			for event in pygame.event.get():
-				if event.type == pygame.QUIT:
-					sys.exit()
-
-			#redraw the screen during each pass through the loop, 'fill' fills the screen with the color
-			self.screen.fill(self.settings.bg_color)
-
-			#make the most recently drawn screen visible
-			pygame.display.flip()
+			self._check_events()
+			self._update_screen()
 			#instance of clock that ticks at the end of the while loop
 			self.clock.tick(60)
+
+	def _check_events(self):
+		'''respond to keypresses and mouse events'''
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				sys.exit()
+
+	def _update_screen(self):
+		#update images on the screen, and flip to the new screen
+		#'fill' fills the screen with the color
+		self.screen.fill(self.settings.bg_color)
+		#draw the ship using the blitme function in the Ship class
+		self.ship.blitme()
+
+		#make the most recently drawn screen visible
+		pygame.display.flip()
 
 if __name__ == '__main__':
 	#make a game instance, and run the game
