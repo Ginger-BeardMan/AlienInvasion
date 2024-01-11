@@ -1,79 +1,43 @@
 import sys
-
 import pygame
-
 from settings import Settings
-from ship import Ship
+from bs_ship import Ship
+
 
 class AlienInvasion:
-	'''overall class to manage game assets and behavior'''
+    # Overall class to manage game assets and behavior
 
-	def __init__(self):
-		'''initialize the game, and create game resources'''
-		pygame.init()
-		'''define the clock to control frame rate'''
-		self.clock = pygame.time.Clock()
-		self.settings = Settings()
+    def __init__(self):
+        # Initialize the game, and create game resources
+        pygame.init()
+        self.settings = Settings()
 
-		self.screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
-		self.settings.screen_width = self.screen.get_rect().width
-		self.settings.screen_height = self.screen.get_rect().height
-		pygame.display.set_caption("Alien Invasion")
+        self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height))
+        pygame.display.set_caption('Alien Invasion')
 
-		'''set background color'''
-		self.bg_color = (230, 230, 230)
+        # Set background color
+        self.bg_color = (230, 230, 230)
 
-		self.ship = Ship(self)
+        self.clock = pygame.time.Clock()
 
-	def run_game(self):
-		'''start the main loop for the game'''
-		while True:
-			self._check_events()
-			self.ship.update()
-			self._update_screen()
-			#instance of clock that ticks at the end of the while loop
-			self.clock.tick(60)
+        self.ship = Ship(self)
 
-	def _check_events(self):
-		'''respond to keypresses and mouse events'''
-		for event in pygame.event.get():
-			if event.type == pygame.QUIT:
-				sys.exit()
-			elif event.type == pygame.KEYDOWN:
-				self._check_keydown_events(event)
-			elif event.type == pygame.KEYUP:
-				self._check_keyup_events(event)
-	
-	def _check_keydown_events(self, event):
-		#respond to keypresses
-		if event.key == pygame.K_RIGHT:
-			#move the ship to the right
-			self.ship.moving_right = True
-		elif event.key == pygame.K_LEFT:
-			#move the ship to the left
-			self.ship.moving_left = True
-		elif event.key == pygame.K_q:
-			self.exit()
+    def run_game(self):
+        # Start the main loop for the game
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    sys.exit()
+            # Redraw the screen during each pass through the loop
+            self.screen.fill(self.settings.bg_color)
 
-	def _check_keyup_events(self, event):
-		#respond to key releases
-		if event.key == pygame.K_RIGHT:
-			self.ship.moving_right = False
-		elif event.key == pygame.K_LEFT:
-			self.ship.moving_left = False
+            # Make the most recently drawn screen visible
+            pygame.display.flip()
+            self.clock.tick(60)
 
+            self.ship.show_ship()
 
-	def _update_screen(self):
-		#update images on the screen, and flip to the new screen
-		#'fill' fills the screen with the color
-		self.screen.fill(self.settings.bg_color)
-		#draw the ship using the blitme function in the Ship class
-		self.ship.blitme()
-
-		#make the most recently drawn screen visible
-		pygame.display.flip()
 
 if __name__ == '__main__':
-	#make a game instance, and run the game
-	ai = AlienInvasion()
-	ai.run_game()
+    ai = AlienInvasion()
+    ai.run_game()
